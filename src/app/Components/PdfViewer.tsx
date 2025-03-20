@@ -77,7 +77,9 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ file, filePath }) => {
           {Array.from(new Array(numPages), (el, index) => (
             <div
               key={`page_${index + 1}`}
-              ref={el => pageRefs.current[index] = el}
+              ref={(el: HTMLDivElement | null) => {
+                pageRefs.current[index] = el;
+              }}
               data-page-number={index + 1}
             >
               <Page pageNumber={index + 1} scale={scale} />
