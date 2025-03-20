@@ -11,39 +11,46 @@ interface PdfViewerProps {
 }
 
 const PdfViewer: React.FC<PdfViewerProps> = ({ file, filePath }) => {
-  const [numPages, setNumPages] = React.useState<number | null>(null);
-  const [pageNumber, setPageNumber] = React.useState(1);
+  const [scale, setScale] = React.useState(1);
+  const [numPages, setNumPages] = React.useState(0);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
   }
 
   return (
-    <div className="w-full h-full p-4">
-      <Document
-        file={filePath ? `assets/Aditya_Bhargava_-_Grokking_Algorithms__An_illustrated_guide_for_programmers_and_other_curious_people-Manning_Publications_(2016).pdf` : file}
-        onLoadSuccess={onDocumentLoadSuccess}
-      >
-        <Page pageNumber={pageNumber} />
-      </Document>
-      <div className="mt-4 flex items-center justify-center gap-4">
+    <div className="w-[40%] p-[50px] h-full flex flex-col relative">
+       <div className="mt-4 flex items-center gap-4 sticky right-1 bottom-0 bg-white p-2 border-t">
         <button
-          className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-          disabled={pageNumber <= 1}
-          onClick={() => setPageNumber(pageNumber - 1)}
+          onClick={() => setScale(scale => Math.max(0.5, scale - 0.2))}
+          className="w-8 h-8 flex items-center justify-center text-black hover:bg-gray-100 rounded-full border border-gray-300"
         >
-          Previous
+          -
         </button>
-        <span>
-          Page {pageNumber} of {numPages}
-        </span>
         <button
-          className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-          disabled={pageNumber >= (numPages || 1)}
-          onClick={() => setPageNumber(pageNumber + 1)}
+          onClick={() => setScale(1)}
+          className="w-8 h-8 flex items-center justify-center text-black border-gray-300"
         >
-          Next
+          Reset
         </button>
+        <button
+          onClick={() => setScale(scale => Math.min(2, scale + 0.2))}
+          className="w-8 h-8 flex items-center justify-center text-black hover:bg-gray-100 rounded-full border border-gray-300"
+        >
+          +
+        </button>
+      </div>
+      <div className="flex-1 overflow-auto">
+        <Document
+          file={filePath ? `assets/Aditya_Bhargava_-_Grokking_Algorithms__An_illustrated_guide_for_programmers_and_other_curious_people-Manning_Publications_(2016).pdf` : file}
+          onLoadSuccess={onDocumentLoadSuccess}
+          loading={<div className="text-gray-600">Loading PDF...</div>}
+          error={<div className="text-red-500">Error loading PDF!</div>}
+        >
+          {Array.from(new Array(numPages), (el, index) => (
+            <Page key={`page_${index + 1}`} pageNumber={index + 1} scale={scale} />
+          ))}
+        </Document>
       </div>
     </div>
   );
