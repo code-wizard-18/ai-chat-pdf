@@ -19,8 +19,8 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ file, filePath }) => {
   }
 
   return (
-    <div className="w-[40%] p-[50px] h-full flex flex-col relative">
-       <div className="mt-4 flex items-center gap-4 sticky right-1 bottom-0 bg-white p-2 border-t">
+    <div className="w-full md:w-1/2 lg:w-[45%] p-4 md:p-[30px] h-full flex flex-col relative">
+      <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
         <button
           onClick={() => setScale(scale => Math.max(0.5, scale - 0.2))}
           className="w-8 h-8 flex items-center justify-center text-black hover:bg-gray-100 rounded-full border border-gray-300"
@@ -29,7 +29,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ file, filePath }) => {
         </button>
         <button
           onClick={() => setScale(1)}
-          className="w-8 h-8 flex items-center justify-center text-black border-gray-300"
+          className="px-3 h-8 flex items-center justify-center text-black hover:bg-gray-100 rounded-md border border-gray-300 text-sm"
         >
           Reset
         </button>
@@ -40,7 +40,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ file, filePath }) => {
           +
         </button>
       </div>
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto mt-16">
         <Document
           file={filePath ? `assets/Aditya_Bhargava_-_Grokking_Algorithms__An_illustrated_guide_for_programmers_and_other_curious_people-Manning_Publications_(2016).pdf` : file}
           onLoadSuccess={onDocumentLoadSuccess}

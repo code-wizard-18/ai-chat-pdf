@@ -10,19 +10,20 @@ export default function Home() {
     setPdf(pdf);
   }
   return (
-    <div className="flex flex-row h-screen w-full">
-      {/* <div className="bg-red-500 h-full w-[450px]">
-        <div className="w-full h-full flex items-center justify-center text-white text-2xl font-bold">Section</div>
-      </div> */}
-      {pdf ? <PdfViewer filePath={pdf} /> : <div className="h-full flex-1 flex flex-col items-center justify-center p-8">
-        <img src="/next.svg" alt="Logo" className="mb-4 w-32 h-32" />
-        <h1 className="text-3xl font-bold text-center text-black mb-8">Chat with any PDF</h1>
-        <div className="w-full max-w-2xl h-[200px]">
-          <FileUploader handlePdf={handlePdf} />
+    <div className="flex flex-col md:flex-row h-screen w-full">
+      {pdf ? (
+        <PdfViewer filePath={pdf} />
+      ) : (
+        <div className="h-full w-full md:flex-1 flex flex-col items-center justify-center p-4 md:p-8">
+          <img src="/next.svg" alt="Logo" className="mb-4 w-24 h-24 md:w-32 md:h-32" />
+          <h1 className="text-2xl md:text-3xl font-bold text-center text-black mb-6 md:mb-8">Chat with any PDF</h1>
+          <div className="w-full max-w-sm md:max-w-2xl h-[180px] md:h-[200px]">
+            <FileUploader handlePdf={handlePdf} />
+          </div>
         </div>
-      </div>}
-      <div className="bg-green-500 h-full flex-1">
-        <div className="w-full h-full flex items-center justify-center text-white text-2xl font-bold">
+      )}
+      <div className="h-screen md:h-full md:flex-1 bg-green-500">
+        <div className="w-full h-full flex items-center justify-center text-white text-xl md:text-2xl font-bold">
           PDF Chat Section
         </div>
       </div>
