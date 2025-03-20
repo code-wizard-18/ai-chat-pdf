@@ -13,10 +13,33 @@ interface PdfViewerProps {
 const PdfViewer: React.FC<PdfViewerProps> = ({ file, filePath }) => {
   const [scale, setScale] = React.useState(1);
   const [numPages, setNumPages] = React.useState(0);
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const pageRefs = React.useRef<(HTMLDivElement | null)[]>([]);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
+    pageRefs.current = new Array(numPages).fill(null);
   }
+
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const pageNumber = Number(entry.target.getAttribute('data-page-number'));
+            if (pageNumber) setCurrentPage(pageNumber);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    pageRefs.current.forEach((ref, index) => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
+  }, [numPages]);
 
   return (
     <div className="w-full md:w-1/2 lg:w-[45%] p-4 md:p-[30px] h-full flex flex-col relative">
@@ -39,16 +62,26 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ file, filePath }) => {
         >
           +
         </button>
+        <div className="px-3 h-8 flex items-center justify-center text-black border-gray-300 text-sm">
+          {currentPage} / {numPages}
+        </div>
       </div>
       <div className="flex-1 overflow-auto mt-16">
         <Document
           file={filePath ? `assets/Aditya_Bhargava_-_Grokking_Algorithms__An_illustrated_guide_for_programmers_and_other_curious_people-Manning_Publications_(2016).pdf` : file}
           onLoadSuccess={onDocumentLoadSuccess}
           loading={<div className="text-gray-600">Loading PDF...</div>}
+          onScroll={({ page }) => setCurrentPage(page)}
           error={<div className="text-red-500">Error loading PDF!</div>}
         >
           {Array.from(new Array(numPages), (el, index) => (
-            <Page key={`page_${index + 1}`} pageNumber={index + 1} scale={scale} />
+            <div
+              key={`page_${index + 1}`}
+              ref={el => pageRefs.current[index] = el}
+              data-page-number={index + 1}
+            >
+              <Page pageNumber={index + 1} scale={scale} />
+            </div>
           ))}
         </Document>
       </div>
